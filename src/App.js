@@ -69,7 +69,7 @@ const Menu = styled.ul`
     background-color: ${(props) => `rgba(${props.theme.bodyRgba})`};
     opacity : 0.85;
     backdrop-filter: blur(25px);
-    transform: ${(props) => props.click ? "translateY(0)" : `translateY(99%)`};
+    transform: ${(props) => props.click ? "translateY(0)" : `translateY(95%)`};
     transition: all 0.3s ease;
     flex-direction: column;
     justify-content: center;
@@ -253,7 +253,7 @@ const BUILDSPACE_TWITTER_LINK = `https://twitter.com/${BUILDSPACE_TWITTER_HANDLE
 const TWITTER_HANDLE = 'andreasbigger';
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 const CONTRACT_ADDRESS = TESTNET_SITE ?
-  "0x3500b4fd854bb1523b0c086c5497084689859aec":
+  "0xC26a682B7883Eb177c7A9770D2F54E7AdC62f190":
 //"0x9548a49f25b1C80FB451ec40cC0401C067D4F6AF" :
   "0x0"
 ;
@@ -272,6 +272,8 @@ export default function App() {
   const [myEpicNfts, setMyEpicNfts] = useState([]);
   const [toastLink, setToastLink] = useState("");
   const [chainId, setChainId] = useState(1);
+  const [FreeCount, setFreeCount] = useState(0);
+  const [TotalFreeCount,setTotalFreeCount] = useState(3000);
 
   // ** Mining state variables
   const [isMining, setIsMining] = useState(false);
@@ -302,7 +304,7 @@ export default function App() {
         draggable: true,
       });
       return
-    }
+    }  
 
     // ** Try to get access to the user's wallet
     ethereum.request({ method: 'eth_accounts' })
@@ -323,6 +325,9 @@ export default function App() {
 
         // ** Get the contract mint count info
         getMintCounts();
+
+        // **Get te contract total FreeCount
+        
 
         // ** Set up our event listener
         setupEventListener(account);
@@ -413,6 +418,9 @@ export default function App() {
 
         console.log("Going to pop wallet now to pay gas...")
         let nftTxn;
+        if (_FreeMeebleCount == 1) {
+        
+        }
         try {
           nftTxn = await connectedContract.FindMeeble(BigNumber.from(_qty), {
             value: ethers.utils.parseEther((0.006969 * _qty).toString()),
@@ -430,11 +438,11 @@ export default function App() {
         }
         setIsMining(true);
 
-        console.log("Mining...please wait.")
+        console.log("Minting...please wait.")
         await nftTxn.wait();
         setIsMining(false);
 
-        console.log(`Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`);
+        console.log(`Minted, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`);
         setIsConfirmed(true);
         setTimeout(() => setIsConfirmed(false), 4000);
       } else {
@@ -488,10 +496,14 @@ export default function App() {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
       const eContract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
-      let max_count = await eContract.MeebelCreatures();
+      let max_count = await eContract.MeebleCreatures();
       setMaxMintCount(max_count.toNumber());
       let curr_count = await eContract.totalSupply();
       setCurrMintCount(curr_count.toNumber());
+      let free_count = await eContract.TotalFreeCount();
+      setFreeCount(free_count.toNumber());
+      let totalfree_count = await eContract.TotalFreeMeeble();
+      setTotalFreeCount(totalfree_count.toNumber());
     } catch (e) {
       toast.error('Wrong network, Connect to the Ethereum network now!!!', {
         position: "bottom-right",
@@ -515,7 +527,7 @@ export default function App() {
         const signer = provider.getSigner();
         const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
 
-        connectedContract.on("EpicMinted", (id, from) => {
+        connectedContract.on("FindMeeble", (id, from) => {
           let tokenId = id.toNumber();
           // let sender = from;
 
@@ -709,7 +721,7 @@ export default function App() {
                           width="50px"
                           cursor="pointer"
                           fontFamily="inherit"
-
+                          marginRight="5px"
                           padding="15px"
                           marginTop="10px"
                           onClick={handleDecrement}
@@ -719,6 +731,7 @@ export default function App() {
                         <Input
                           readOnly
                           fontFamily="inherit"
+                          borderRadius="50px"
                           fontSize="30px"
                           width="80px"
                           height="40px"
@@ -735,6 +748,7 @@ export default function App() {
                           color="white"
                           cursor="pointer"
                           fontFamily="inherit"
+                          marginLeft="5px"
                           padding="15px"
                           marginTop="10px"
                           onClick={handleIncrement}
@@ -743,17 +757,23 @@ export default function App() {
                         </Button>
                       </Flex>
                       
-                     
+                     {FreeCount >= TotalFreeCount ? (
                         <Button
                         disabled={(currMintCount >= maxMintCount || !DEPLOYED_CHAINS.includes(chainId)) ? true : false}
-                        className="waveButton cta-button connect-wallet-button"
-                        backgroundColor="#4079DC"
+                        
+                        marginTop="20px"
+                        background="-webkit-linear-gradient(left, #ce73da, #35aee2)"
+                        background-size=" 200% 200%"
+                        animation="gradient-animation 4s ease infinite"
+                        // backgroundColor="#4079DC"
                         borderRadius="50px"
                         boxShadow="0px 2px 2px 1px #0F0F0F"
                         color="white"
                         cursor="pointer"
                         fontFamily="inherit"
-                        padding="15px"
+                        fontSize="20px"
+                        color="black"
+                        padding="10px"
                         onClick={askContractToMintNft}
                         style={{
                           opacity: (currMintCount >= maxMintCount || !DEPLOYED_CHAINS.includes(chainId)) ? 0.5 : 1,
@@ -761,6 +781,31 @@ export default function App() {
                       >
                           Mint
                         </Button>
+                      ) : ( 
+                        <Button
+                        disabled={(currMintCount >= maxMintCount || !DEPLOYED_CHAINS.includes(chainId)) ? true : false}
+                        
+                        marginTop="20px"
+                        background="-webkit-linear-gradient(left, #ce73de, #35aee2)"
+                        background-size=" 200% 200%"
+                        animation="gradient-animation 4s ease infinite"
+                        // backgroundColor="#4079DC"
+                        borderRadius="50px"
+                        boxShadow="0px 2px 2px 1px #0F0F0F"
+                        color="white"
+                        cursor="pointer"
+                        fontFamily="inherit"
+                        fontSize="20px"
+                        color="black"
+                        padding="10px"
+                        onClick={askContractToMintNft}
+                        style={{
+                          opacity: (currMintCount >= maxMintCount || !DEPLOYED_CHAINS.includes(chainId)) ? 0.5 : 1,
+                        }}
+                      >
+                          Mint
+                        </Button>)
+                      }
                         </>
               ) : null}
 

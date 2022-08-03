@@ -6,6 +6,7 @@ import { dark } from "../../styles/Themes";
 import Loading from "../Loading";
 import img from "../../assets/bg1.gif";
 import LogoFooter from "../../assets/cc-zero.png";
+import '../../App.css';
 const Carousel = lazy(() => import("../Carousel"));
 
 const Section = styled.section`
@@ -190,7 +191,7 @@ const About = () => {
   return (
     <Section id="about">
       <Container style={{ transform: `translateY(${offsetY * 0.08}px)` }}>
-        <Box1 style={{ transform: `translateY(${-offsetY * 0.1}px)` }}>
+        <Box1 style={{ transform: `translateY(${-offsetY * 0.05}px)` }}>
           <Suspense fallback={<Loading />}>
             <Carousel />{" "}
           </Suspense>{" "}
@@ -210,12 +211,12 @@ const About = () => {
             <span style={{ color: "#E0FFFF" }}>B</span>
             <span style={{ color: "#40E0D0" }}>L</span>
             <span style={{ color: "#FFF0F5" }}>E</span>
-            <span style={{ color: "#BA55D3" }}>S</span>
+            <span style={{ color: "#BA55D3" }}>S</span> <br />
           </Title>
           <SubText>
             <br /> MEEBLES ARE DA WEIRD CREATURES, <br />
             WHO BORN FROM LOVE OF DA MOTHER <br />
-            AND DA FATHER.
+            AND DA FATHER.<br />
           </SubText>
           <SubText>
             <br />
@@ -233,7 +234,7 @@ const About = () => {
             GONE, WHERE ARE THEY?
             <br />
             <br /> #SAVEMEEBLES <br />
-            #FindTheLostMeebles
+            <br /><span className="rainbow bg-clip-text text-transparent font-bold">#FindTheLostMeebles</span>
           </SubText>
         </Box2>
       </Container>
