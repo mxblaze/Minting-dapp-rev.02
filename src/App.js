@@ -418,9 +418,8 @@ export default function App() {
 
         console.log("Going to pop wallet now to pay gas...")
         let nftTxn;
-        if (_FreeMeebleCount == 1) {
         
-        }
+        
         try {
           nftTxn = await connectedContract.FindMeeble(BigNumber.from(_qty), {
             value: ethers.utils.parseEther((0.006969 * _qty).toString()),
@@ -757,7 +756,7 @@ export default function App() {
                         </Button>
                       </Flex>
                       
-                     {FreeCount >= TotalFreeCount ? (
+                     {FreeCount <= TotalFreeCount ? (
                         <Button
                         disabled={(currMintCount >= maxMintCount || !DEPLOYED_CHAINS.includes(chainId)) ? true : false}
                         
