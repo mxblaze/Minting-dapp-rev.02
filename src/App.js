@@ -14,7 +14,7 @@ import abi from "./utils/Meeble.json";
 
 import miningSVG from './assets/3dprinting.svg';
 import confirmedSVG from './assets/checked_contract.svg';
-import dropSVG from './assets/drop.svg';
+
 
 //------------------------------------//
 import img from './assets/bg.gif';
@@ -29,7 +29,11 @@ import { BrowserRouter } from "react-router-dom";
 import { Button, ChakraProvider, Flex, Input, Text } from "@chakra-ui/react";
 import TypeWriterText from "./components/TypeWriterText";
 
+
 //-----------------------------------//
+
+
+
 const NavBar = styled.nav`
   display: flex;
   justify-content: space-between;
@@ -274,16 +278,14 @@ export default function App() {
   const [chainId, setChainId] = useState(1);
   const [FreeCount, setFreeCount] = useState(0);
   const [TotalFreeCount,setTotalFreeCount] = useState(3000);
-
+  const [OwnerFreeCount,setOwnerFreeCount] = useState(0);
+  const [MintAmount, setMintAmount] = useState(1);
   // ** Mining state variables
   const [isMining, setIsMining] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
-
   // ** Gallery Vars
   const [initialLoading, setInitialLoading] = useState(true);
   const [loadingGallery, setLoadingGallery] = useState(false);
-
-
   // ** Refactored get chain id logic from provider
   const getChainId = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -305,7 +307,6 @@ export default function App() {
       });
       return
     }  
-
     // ** Try to get access to the user's wallet
     ethereum.request({ method: 'eth_accounts' })
     .then((accounts) => {
@@ -313,22 +314,12 @@ export default function App() {
       if(accounts.length !== 0) {
         // ** Get the first account
         let account = accounts[0].toString().toLowerCase();
-
         // ** Get the chainId
         getChainId();
-
         // ** Store the account
         setCurrentAccount(account);
-
-        // ** Load Account Gallery
-        //loadGallery(account);
-
         // ** Get the contract mint count info
-        getMintCounts();
-
-        // **Get te contract total FreeCount
-        
-
+        getMintCounts();      
         // ** Set up our event listener
         setupEventListener(account);
       } else {
@@ -343,25 +334,6 @@ export default function App() {
       }
     })
   }
-
-  // const loadGallery = async (account) => {
-  //   setLoadingGallery(true);
-  //   const provider = new ethers.providers.Web3Provider(window.ethereum);
-  //   const signer = provider.getSigner();
-  //   const eContract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
-  //   let eventFilter = eContract.filters.EpicMinted();
-  //   let events = await eContract.queryFilter(eventFilter)
-  //   let tokens = [];
-  //   await Promise.all(events.map(async (e, i) => {
-  //     let tx_res = await e.getTransaction();
-  //     let address = tx_res.from.toString().toLowerCase();
-  //     if(address.trim() === account.trim()) {
-  //       tokens.push({ tokenId: i, address: address });
-  //     }
-  //   }));
-  //   setMyEpicNfts(tokens);
-  //   setLoadingGallery(false);
-  // }
 
   const connectWallet = () => {
     const { ethereum } = window;
@@ -381,16 +353,12 @@ export default function App() {
     .then((accounts) => {
       let account = accounts[0].toString().toLowerCase();
       setCurrentAccount(account);
-
       // ** Get the chainId
       getChainId();
-
       // ** Get the contract mint count info
       getMintCounts();
-
       // ** Set up our event listener
       setupEventListener(account);
-
       // ** Refresh page
       checkIfWalletIsConnected();
     })
@@ -405,24 +373,71 @@ export default function App() {
       });
     })
   }
-  const [_qty, setMintAmount] = useState(1);
-  const askContractToMintNft = async () => {
-    
+  
+  const askContractToMintNft1 = async () => {
     try {
       const { ethereum } = window;
-
       if (ethereum) {
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
         const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
-
         console.log("Going to pop wallet now to pay gas...")
         let nftTxn;
-        
-        
         try {
-          nftTxn = await connectedContract.FindMeeble(BigNumber.from(_qty), {
-            value: ethers.utils.parseEther((0.006969 * _qty).toString()),
+          if(OwnerFreeCount < 1){
+            nftTxn = await connectedContract.FindMeeble(BigNumber.from(MintAmount), {
+              value: ethers.utils.parseEther((0.006969 * (MintAmount-1)).toString()),
+            });
+          } else {
+            nftTxn = await connectedContract.FindMeeble(BigNumber.from(MintAmount), {
+              value: ethers.utils.parseEther((0.006969 * (MintAmount)).toString()),
+            });
+          }  
+        } catch (er) {
+          toast.error('Rejected Transaction', {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+          return;
+        }
+        setIsMining(true);
+        console.log("Minting...please wait.")
+        await nftTxn.wait();
+        setIsMining(false);
+        console.log(`Minted, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`);
+        setIsConfirmed(true);
+        setTimeout(() => setIsConfirmed(false), 4000);
+      } else {
+        console.log("Ethereum object doesn't exist!");
+      }
+    } catch (error) {
+      toast.error('Failed to mint, please try again!', {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
+  }
+
+  const askContractToMintNft2 = async () => {
+    try {
+      const { ethereum } = window;
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+        console.log("Going to pop wallet now to pay gas...")
+        let nftTxn;
+        try {
+          nftTxn = await connectedContract.FindMeeble(BigNumber.from(MintAmount), {
+            value: ethers.utils.parseEther((0.006969 * MintAmount).toString()),
           });
         } catch (er) {
           toast.error('Rejected Transaction', {
@@ -436,11 +451,9 @@ export default function App() {
           return;
         }
         setIsMining(true);
-
         console.log("Minting...please wait.")
         await nftTxn.wait();
         setIsMining(false);
-
         console.log(`Minted, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`);
         setIsConfirmed(true);
         setTimeout(() => setIsConfirmed(false), 4000);
@@ -461,14 +474,14 @@ export default function App() {
   // const askContractToxMintNft = () => {
   //   let cost = 6969000000;
   //   let gasLimit = 3000000;
-  //   let totalCostWei = String(cost * _qty);
-  //   let totalGasLimit = String(gasLimit * _qty);
+  //   let totalCostWei = String(cost * MintAmount);
+  //   let totalGasLimit = String(gasLimit * MintAmount);
   //   console.log("Cost: ", totalCostWei);
   //   console.log("Gas limit: ", totalGasLimit);
     
   //   setClaimingNft(true);
   //   blockchain.smartContract.methods
-  //     .FindMeeble(_qty)
+  //     .FindMeeble(MintAmount)
   //     .send({
   //       gasLimit: String(totalGasLimit),
   //       to: 0x3500b4fd854bb1523b0c086c5497084689859aec,
@@ -495,6 +508,7 @@ export default function App() {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
       const eContract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+      const address = signer.getAddress()
       let max_count = await eContract.MeebleCreatures();
       setMaxMintCount(max_count.toNumber());
       let curr_count = await eContract.totalSupply();
@@ -503,10 +517,12 @@ export default function App() {
       setFreeCount(free_count.toNumber());
       let totalfree_count = await eContract.TotalFreeMeeble();
       setTotalFreeCount(totalfree_count.toNumber());
+      let owner_freecount = await eContract._FreeMeebleCount(address);
+      setOwnerFreeCount(owner_freecount.toNumber());
+      console.log();
     } catch (e) {
-      toast.error('Wrong network, Connect to the Ethereum network now!!!', {
+      toast.error('Wrong network, Please connect to the Ethereum network', {
         position: "bottom-right",
-        
         autoClose: 5000,
         hideProgressBar: true,
         closeOnClick: true,
@@ -526,15 +542,15 @@ export default function App() {
         const signer = provider.getSigner();
         const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
 
-        connectedContract.on("FindMeeble", (id, from) => {
+        connectedContract.on('FindMeeble', (id, from) => {
           let tokenId = id.toNumber();
           // let sender = from;
 
           // ** Update the current minted count
           setCurrMintCount(tokenId + 1);
 
-          // ** Load new Gallery
-          loadGallery(account);
+         
+          
 
           // ** Set toast link
           setToastLink(`https://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId}`);
@@ -566,13 +582,13 @@ export default function App() {
     }
   }
   const handleDecrement = () => {
-    if (_qty <= 1) return;
-    setMintAmount(_qty - 1);
+    if (MintAmount <= 1) return;
+    setMintAmount(MintAmount - 1);
   };
 
   const handleIncrement = () => {
-    if (_qty >= 6) return;
-    setMintAmount(_qty + 1);
+    if (MintAmount >= 6) return;
+    setMintAmount(MintAmount + 1);
   };
   const [click, setClick] = useState(false);
   useEffect(() => {
@@ -703,7 +719,7 @@ export default function App() {
           {/* show how many NFTs were minted after connect wallet*/}
           {DEPLOYED_CHAINS.includes(chainId) ? (
             <div style={{padding : '20px'}}>
-              <span className="bio-text">{currMintCount}/{maxMintCount}</span> 
+              <span className="bio-text">{currMintCount}/{maxMintCount} : {OwnerFreeCount}</span> 
             </div>
           ) : null}
 
@@ -738,7 +754,7 @@ export default function App() {
                           paddingLeft="15px"
                           marginTop="10px"
                           type="number"
-                          value={_qty} />
+                          value={MintAmount} />
                         <Button
                           backgroundColor="#4079DC"
                           borderRadius="50px"
@@ -773,7 +789,7 @@ export default function App() {
                         fontSize="20px"
                         color="black"
                         padding="10px"
-                        onClick={askContractToMintNft}
+                        onClick={askContractToMintNft1}
                         style={{
                           opacity: (currMintCount >= maxMintCount || !DEPLOYED_CHAINS.includes(chainId)) ? 0.5 : 1,
                         }}
@@ -797,7 +813,7 @@ export default function App() {
                         fontSize="20px"
                         color="black"
                         padding="10px"
-                        onClick={askContractToMintNft}
+                        onClick={askContractToMintNft2}
                         style={{
                           opacity: (currMintCount >= maxMintCount || !DEPLOYED_CHAINS.includes(chainId)) ? 0.5 : 1,
                         }}
