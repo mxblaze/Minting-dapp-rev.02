@@ -1,8 +1,5 @@
 import React, { lazy, Suspense, useEffect, useState } from "react";
 import styled, { ThemeProvider } from "styled-components";
-// import Carousel from '../Carousel'
-import Button from "../Button";
-import { dark } from "../../styles/Themes";
 import Loading from "../Loading";
 import img from "../../assets/bg1.gif";
 import LogoFooter from "../../assets/cc-zero.png";
@@ -21,6 +18,7 @@ const Section = styled.section`
   /* display: flex; */
   justify-content: center;
   align-items: center;
+  align-content : space-between;
   position: relative;
   /* overflow: hidden; */
   /* //  @media (max-width: 64em) { */
@@ -37,7 +35,7 @@ const Section = styled.section`
 `;
 
 const Container = styled.div`
-  width: 75%;
+  width: 85%;
   margin: 0 auto;
   /* background-color: lightblue; */
 
@@ -103,7 +101,7 @@ const Title = styled.h2`
   text-shadow: 3px 3px black;
 
   @media (max-width: 64em) {
-    font-size: ${(props) => props.theme.fontxl};
+    font-size: ${(props) => props.theme.fontxxl};
     width: 100%;
     text-align: center;
   }
@@ -111,7 +109,7 @@ const Title = styled.h2`
     font-size: ${(props) => props.theme.fontxl};
   }
   @media (max-width: 30em) {
-    font-size: ${(props) => props.theme.fontlg};
+    font-size: ${(props) => props.theme.fontxl};
   }
 `;
 const SubText = styled.p`
@@ -133,7 +131,7 @@ const SubText = styled.p`
     font-size: ${(props) => props.theme.fontmd};
   }
   @media (max-width: 30em) {
-    font-size: ${(props) => props.theme.fontsm};
+    font-size: ${(props) => props.theme.fontmd};
   }
 `;
 
@@ -197,7 +195,7 @@ const About = () => {
           </Suspense>{" "}
         </Box1>
         <Box2>
-          <Title style={{ color: "Orange" }}>
+          <Title>
             <span style={{ color: "#FF7F50" }}>T</span>
             <span style={{ color: "#FFF8DC" }}>H</span>
             <span style={{ color: "#ADFF2F" }}>E</span>

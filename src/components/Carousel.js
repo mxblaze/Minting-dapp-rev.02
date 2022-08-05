@@ -31,16 +31,28 @@ const Container = styled.div`
   }
 
   @media (max-width: 64em) {
-    height: 40vh;
+    height: 43vh;
     width: 30vw;
   }
+  @media (max-width: 54em) {
+    height: 43vh;
+    width: 35vw;
+  }
   @media (max-width: 48em) {
-    height: 50vh;
+    height: 45vh;
     width: 40vw;
   }
+  @media (max-width: 44em) {
+    height: 40vh;
+    width: 40vw;
+  }
+  @media (max-width: 40em) {
+    height: 38vh;
+    width: 45vw;
+  }
   @media (max-width: 30em) {
-    height: 45vh;
-    width: 60vw;
+    height: 35vh;
+    width: 50vw;
   }
 
   .swiper {

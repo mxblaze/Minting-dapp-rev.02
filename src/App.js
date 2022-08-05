@@ -152,7 +152,7 @@ const HamburgerMenu = styled.span`
   height: 2px;
   background: ${(props) => props.theme.text};
   position: absolute;
-  top: 4rem;
+  top: 5rem;
   left: 50%;
   transform: ${(props) =>
     props.click
@@ -246,6 +246,28 @@ const Box = styled.div`
   justify-content: center;
   align-items: center;
   padding-top: 30px;
+`;
+const SubText = styled.p`
+  font-size: ${(props) => props.theme.fontlg};
+  color: orange;
+  
+  text-shadow: 2px 2px black;
+  
+  
+  @media (max-width: 30em) {
+    font-size: ${(props) => props.theme.fontmd};
+  }
+`;
+const SubText2 = styled.p`
+  font-size: ${(props) => props.theme.fontlg};
+  color: orangered;
+  text-align : center;
+  text-shadow: 2px 2px black;
+  
+  
+  @media (max-width: 30em) {
+    font-size: ${(props) => props.theme.fontmd};
+  }
 `;
 
 
@@ -677,16 +699,16 @@ export default function App() {
          {currAccount ? ( DEPLOYED_CHAINS.includes(chainId) ? (
          <div>
             <Box margin="0 15px">
-              <Text fontSize="25px" color="orange">
+              <SubText>
                 Connected
-              </Text>
+              </SubText>
             </Box>
           </div>
               ) : (
             <Box margin="0 15px">
-              <Text fontSize="25px" color="orangered" align="center">
+              <SubText2>
                   Wrong Network
-              </Text>
+              </SubText2>
               </Box>) 
           ) : (
               <div style={{display: 'flex', flexDirection: 'column', margin: 'auto'}}>
@@ -857,7 +879,7 @@ export default function App() {
                   Connect Wallet
                 </Button>
                 <div style={{display: 'flex', flexDirection: 'column', margin: 'auto' }}>
-                <p className="sub-text" style={{padding: '20px'}}>
+                <p className="sub-text" style={{padding: '20px', textAlign :'center'}}>
                   Connect wallet to start finding Meebles
                 </p>
               </div>

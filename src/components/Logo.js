@@ -15,7 +15,7 @@ const LogoText = styled.div`
 const Left = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: left;
   /* align-items: center; */
   filter: drop-shadow(1px 2px 5px Black);
   padding-top: 10px;
