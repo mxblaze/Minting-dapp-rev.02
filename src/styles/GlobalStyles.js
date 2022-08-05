@@ -18,7 +18,7 @@ ${
 }
 
 body{
-    /* font-family: 'Sora', sans-serif; */
+    
     font-family: "Gwibble", sans-serif;
     overflow-x: hidden;
     background-color:#3F78DC;
