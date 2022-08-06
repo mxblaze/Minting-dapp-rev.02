@@ -28,7 +28,7 @@ import { light } from "./styles/Themes";
 import { BrowserRouter } from "react-router-dom";
 import { Button, ChakraProvider, Flex, Input, Text } from "@chakra-ui/react";
 import TypeWriterText from "./components/TypeWriterText";
-
+//-------------------------------------//
 
 //-----------------------------------//
 
@@ -165,6 +165,8 @@ const HamburgerMenu = styled.span`
 
   cursor: pointer;
   transition: all 0.3s ease;
+  z-index: 1;
+  
 
   @media (max-width: 64em) {
     /* 1024 px */
@@ -249,9 +251,18 @@ const Box = styled.div`
 `;
 const SubText = styled.p`
   font-size: ${(props) => props.theme.fontlg};
-  color: orange;
+  color: white;
   
-  text-shadow: 2px 2px black;
+  text-shadow:
+      0 0 7px #fff,
+      0 0 10px #fff,
+      0 0 21px #fff,
+      0 0 42px rgb(243, 174, 255),
+      0 0 82px rgb(229, 123, 255),
+      0 0 92px rgb(225, 88, 243),
+      0 0 102px rgb(190, 77, 255),
+      0 0 151px rgb(207, 41, 248);
+}
   
   
   @media (max-width: 30em) {
@@ -319,9 +330,9 @@ export default function App() {
   const checkIfWalletIsConnected = () => {
     const { ethereum } = window;
     if(!ethereum) {
-      toast.error('🦊 Missing Metamask!', {
+      toast.error('Missing Metamask!', {
         position: "bottom-right",
-        autoClose: 5000,
+        autoClose: 3000,
         hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
@@ -361,9 +372,9 @@ export default function App() {
     const { ethereum } = window;
 
     if(!ethereum) {
-      toast.error('🦊  Metamask!', {
+      toast.error('Metamask!', {
         position: "bottom-right",
-        autoClose: 5000,
+        autoClose: 3000,
         hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
@@ -387,7 +398,7 @@ export default function App() {
     .catch((e) => {
       toast.error('Failed to load metamask accounts! Please refresh the page!', {
         position: "bottom-right",
-        autoClose: 5000,
+        autoClose: 3000,
         hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
@@ -418,7 +429,7 @@ export default function App() {
         } catch (er) {
           toast.error('Rejected Transaction', {
             position: "bottom-right",
-            autoClose: 5000,
+            autoClose: 3000,
             hideProgressBar: true,
             closeOnClick: true,
             pauseOnHover: true,
@@ -439,7 +450,7 @@ export default function App() {
     } catch (error) {
       toast.error('Failed to mint, please try again!', {
         position: "bottom-right",
-        autoClose: 5000,
+        autoClose: 3000,
         hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
@@ -464,7 +475,7 @@ export default function App() {
         } catch (er) {
           toast.error('Rejected Transaction', {
             position: "bottom-right",
-            autoClose: 5000,
+            autoClose: 3000,
             hideProgressBar: true,
             closeOnClick: true,
             pauseOnHover: true,
@@ -485,7 +496,7 @@ export default function App() {
     } catch (error) {
       toast.error('Failed to mint, please try again!', {
         position: "bottom-right",
-        autoClose: 5000,
+        autoClose: 3000,
         hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
@@ -545,7 +556,7 @@ export default function App() {
     } catch (e) {
       toast.error('Wrong network, Please connect to the Ethereum network', {
         position: "bottom-right",
-        autoClose: 5000,
+        autoClose: 3000,
         hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
@@ -579,7 +590,7 @@ export default function App() {
 
           toast(`You save The Meebles`, {
             position: "bottom-right",
-            autoClose: 5000,
+            autoClose: 3000,
             hideProgressBar: true,
             closeOnClick: true,
             pauseOnHover: true,
@@ -587,7 +598,7 @@ export default function App() {
           });
 
           // ** Reset Toast link after toast duration
-          setTimeout(() => setToastLink(OPENSEA_COLLECTION_URL), 5000);
+          setTimeout(() => setToastLink(OPENSEA_COLLECTION_URL), 3000);
         });
       } else {
         console.log("Ethereum object doesn't exist!");
@@ -595,7 +606,7 @@ export default function App() {
     } catch (error) {
       toast.warn('Not your fault, we failed to set up notifications for minting! This means you\'ll have to refresh the page when you finish minting :)', {
         position: "bottom-right",
-        autoClose: 5000,
+        autoClose: 3000,
         hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
@@ -741,7 +752,7 @@ export default function App() {
           {/* show how many NFTs were minted after connect wallet*/}
           {DEPLOYED_CHAINS.includes(chainId) ? (
             <div style={{padding : '20px'}}>
-              <span className="bio-text">{currMintCount}/{maxMintCount} : {OwnerFreeCount}</span> 
+              <span className="neonText" style={{fontSize:'40px'}}>{currMintCount}/{maxMintCount}</span> 
             </div>
           ) : null}
 
@@ -767,13 +778,17 @@ export default function App() {
                         </Button>
                         <Input
                           readOnly
+                          className="neonText"
                           fontFamily="inherit"
-                          borderRadius="50px"
+                          backgroundColor="black"
+                          color ="white"
+                          opacity="0.7"
+                          borderRadius="30px"
                           fontSize="30px"
                           width="80px"
                           height="40px"
                           textAlign="center"
-                          paddingLeft="15px"
+                          //paddingLeft="5px"
                           marginTop="10px"
                           type="number"
                           value={MintAmount} />

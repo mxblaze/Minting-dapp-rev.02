@@ -222,7 +222,7 @@ const About = () => {
             MEEBLES, STRANGE LIGHT COMES <br />
             ACROSS THE SKY N'
           </SubText>
-          {<Title style={{ color: "#dbff00" }}>
+          {<Title className='neonText'>
             <br />
             BOOM!!! <br />
             <br />
